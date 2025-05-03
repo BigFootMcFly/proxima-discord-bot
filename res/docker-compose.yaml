@@ -1,0 +1,15 @@
+---
+services:
+  discord-bot:
+    image: proxima.goliath.hu/proxima/discord-bot:latest
+    container_name: bot
+    volumes:
+      - "./volumes/bot/env/.env:/app/Bot/.env:ro"
+      - "./volumes/bot/storage:/app/Bot/Storage"
+    restart: unless-stopped
+    networks:
+      - proxima
+
+networks:
+  proxima:
+    external: true

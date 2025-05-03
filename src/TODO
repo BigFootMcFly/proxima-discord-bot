@@ -1,0 +1,286 @@
+☐ Add initial script on entry to cehck if: (maybe entrypoint.sh)
+    //- intl is installed
+    the storage files ar writable:
+        - Storage/Logs
+        - Storage/Smarty/templates_c
+# ---- Completed ----
+✔ Create install instructions for folders to create @done(25-04-28 18:21)
+
+✘ MAYBEE - Add .git folder to image @cancelled(25-04-28 12:39)
+    OR - remove git version logging from dev log...
+    NOTE: it works, just there is no git info in  the dev log...
+    NOTE: no real need for it now, during dev it works, otherwise not needed...
+
+✘ Test to use without intl, define locale names it would save lots of space in both image sizes... @cancelled(25-04-28 12:37)
+    (locale_get_display_name, etc...)
+    NOTE: postponed for later
+
+✔ @critical /profile fails (BOT not serponding) @done(25-04-16 11:53)
+        if no profile is found - OK
+        if setting timezone - OK
+            Your timezone succesfully updated to "Europe/Budapest".
+            Your local time is: "2025-04-14 12:08:51"
+        if requesting now   - FAIL
+        if setting timezone - OK
+        if setting locale - FAIL (autocomplete OK)
+        if bot is run on Beast, /profile works... (backend still runs on hercules)
+            Your timezone is: "Europe/Budapest",
+            Your local time is: "2025-04-14 12:27:27"
+            Your locale is: "n/a - not defined"
+    NOTE: Fatal error: Uncaught Error: Call to undefined function locale_get_display_name()
+    NOTE: updated Dockerfile to start from the default alpine image instead of php
+
+✔ @critical If there are no remainders, a /list fails with: @done(25-04-16 11:04)
+    Error: The page 1 is invalid!
+    Please chose between 1 and 0.
+
+✔ @high The usage of 'withRejectErrorResponse(false)' is not needed anymore. Remaove it or change parameter to true. @done(25-01-08 11:09)
+        NOTE: there is no need for the more detailed response, client cannot do anything with that extra information,
+                it can be useed/handled by the developer...
+        NOTE: for now, the function is kept in place, only the parameter is set to true.
+
+✔ @low Run cs-fixer befor deployment to github. @done(25-01-01 13:21)
+
+✔ @low Cache::getDiscordUser() (and all others) have this description: @done(25-01-01 13:24)
+        @promise-rejected fn (mixed $reason): void
+        theretically those will return an Exception or ApiResponse as a reason, maybe narrow down the "mixed" type...
+        NOTE: things can cheange outside of my code, so this cannot be guarantead, so i keep it this way for now...
+
+✔ @low ->format('Y-m-d H:i') used in many places, maybe this should be adjustable by the discorduser... @done(24-12-30 14:36)
+        or maybe put in the .env file
+        NOTE: added DiscordBot::getDateTimeFormat(), this can be overwritten later if needed...
+
+✔ @critical Update all browser response handling to make use of responseCodes @done(24-12-30 14:27)
+
+✔ @critical update all api calls to use 'withRejectErrorResponse(false)' @done(24-12-30 14:27)
+
+✘ @high Add mode to change default behaviour to send messages to the user. (DM/default channel/etc.) (DM may be not optimal..) @cancelled(24-12-30 14:20)
+    NOTE: emphemeral messages can only be sent as a reply to an interaction, so the bot cannot sent them...
+    NOTE: there could be two options: send DM ort send to the channel where the remainder was added by default,
+            but that can be achieved now, so skip this for now, maybe later if needed...
+
+✔ @high Add a .env variable to ENABLE RemainderService. @done(24-12-30 14:16)
+        NOTE: On the first run in the stack, both the backend abd the bot are running,
+            but the bot needs an api token before it can access the backend, which should be created by the user
+            _OR_ find a way to automate it
+            so the current setup steps are: -
+                - customize .env (pw, url, etc)
+                - start stack (or even better "docker compose up backend")
+                - generate backend token
+                - set beckend token in bot .env
+                - restart stack (or only the bot)
+            BUT! in the meantime, the bot logs unauth errors in the dev.log !!!
+            for deployment ideas see: https://github.com/refactorian/laravel-docker/blob/main/docker-compose.yml
+        NOTE: did no add switch, created a setup readme instead
+            detailed setup instruction are in the discord-bot-docker repository
+
+✘ @medium deprecated warning in the https://github.com/discord-php/DiscordPHP/blob/master/src/Discord/Builders/CommandAttributes.php file line 260 @cancelled(24-12-30 14:15)
+    NOTE: in the composer, we have a "dev-master" for this package. Why? - master has an exception on start, maybe will dig in later
+    PHP Deprecated:  Creation of dynamic property Discord\Builders\CommandBuilder::$options is deprecated in /mnt/devel/Projects/discord-bot-goliath/src/vendor/team-reflex/discord-php/src/Discord/Builders/CommandAttributes.php on line 260
+    NOTE: not my program, the DiscordPHP package
+
+✘ @low MAYBE make use of the "changes" array of the api results... @cancelled(24-12-29 14:37)
+    NOTE: backend api updated, so it will return the changes list if anything changes,
+            currently the bot is not using it, no need for it...
+    NOTE: maybe later...
+
+✘ @high Add failApiRequest like without the interaction (like: we get the actual remainders every second) @cancelled(24-12-29 14:36)
+    NOTE: for now the RemainderService is the only place for them, but with two different datasets, not worth the effort
+
+✔ @high Clean up testing/dev stuff (USER_VONJAN_ID, devtest command, ReminderService::seedTest, etc...) @done(24-12-29 14:32)
+
+✔ @today Clean up ReminderService! @done(24-12-29 14:20)
+
+✔ @low Smarty needs wiritable cache directories !!! @done(24-12-28 14:51)
+    NOTE: this is a docker building thing!!!
+    NOTE: added a storage volume and updated the name for smarty (from "Storage" to "storage")
+
+✘ @low _MAYBE_ convert DiscordBot to HasDiscordBot/HasBot trait... @cancelled(24-12-28 11:12)
+    NOTE: nope! This way is a clear indication for the responsoibilities of that class,
+            better than use self/$this for that functionality!
+
+✘ @low The following code is duplicate inEditRemainder: (autoCompleteMessage, autoCompleteWhen) @cancelled(24-12-28 11:07)
+        ```php
+            $remainder = $this->getActualRemainder($interaction, $discordUser->remainders);
+
+            // fail, if the remainder cannot be evaluated
+            if (false === $remainder) {
+                $this->invalidRemainderAlias($interaction);
+                return;
+            }
+        ```
+        NOTE: Not worth to factor it out to a new function, keeping it as is
+
+        ✘ @low _MAYBE_ add an admin command for maintance... @cancelled(24-12-28 09:52)
+    NOTE: not really needed, maybe add later...
+
+✘ @low Add "admin" interface/config/option/etc. to temporary suspend/disable remainderservice (possible even on a running bot) @cancelled(24-12-28 09:52)
+    NOTE: not really needed, maybe add later...
+
+✔ @high Make all messages the sam color scema! (/list differs from /profile) @done(24-12-28 09:19)
+
+✔ @low _MAYBE_ remove bool|null possibilities (from all functions) in Loadable class @done(24-12-27 16:13)
+    NOTE: in plases, wher it can safeguard from other errors, the null is kept...
+
+✔ @low Maybe add phpdoc to all functions... @done(24-12-27 16:07)
+    NOTE: all self coded functions/classes have PHPDoc blocks now, the original template code is untouched...
+
+✔ @high DevLogger - add exact time for the log! @done(24-12-27 16:06)
+    NOTE: datetime field already exists...
+
+✔ @high Add a way to notify the the Bot to invalidate cached data... or set a time limit for the cache... @done(24-12-27 16:04)
+        NOTE: currently, if on the admin a new remainder is added or an old one is removed/updated/finished/cancelled the cached list does not update...
+        webhook maybe? or add a message server to the bot...
+        IDEA: add a server @see: https://reactphp.org/http/#server-usage
+        NOTE: added ttl to cache (admin modifications are not normal/intended behaviour, user does not have a dedicated dashboard for it),
+                no reason to overcomplicate it unless the functionality is needed...
+
+✘ @low _MAYBE_ add more info to DevLogger in DiscordBot::failApiRequest - like method (GET/PUT/etc), url (/remainder-by-due-at/{timestamp}?withDiscordUser) @cancelled(24-12-27 15:57)
+        to make easier for dev to categorize the problem
+        IDEA:   make an apiClient interface, with all the calls
+                make normal implementation, without debug
+                make a debug implementation
+                on startup, if debug is needed, use the debug version, otherwise the normal one
+                That needs a new PromiseResponse class, which channels the then() params to the promise then...
+        TODO:   make a new debug class with a getDebugInfo($object) function, which use reflaction to see, if the $object has $debugInfo or not
+                if it has, return $object->getDebugInfo(),
+                if not, return []
+        NOTE: method/url is not accessable from the response nor from debug_backtrace, it would need way to much time to figure it out, skipping...
+
+✘ @low Refactor Cache @cancelled(24-12-27 11:17)
+    - rename "getRemainderList" to "remainders"
+    - make the {get|store|forget)DiscordUser magic functions,
+    - rename getDiscordUserBySnowflake to getDiscordUser (snowflake is not used anywhere else!) - DONE
+    NOTE: a large scale refactoring could be nice, but is to much work for this small project,
+            so it is not happening now.
+            basicly the idea is: use like `$this->getCache($discordUser)->forget()`
+            but that would need to define a remainderList class (instead of the current array),
+            the DiscordUser->remainders needed to be modified and all occurances it, the list still neededa key in the cache,
+            which now is the discordUser->id..
+            The Cache::getInstance() had to be rewritten, it should return the ObjectCache basesd on the parameter's class,
+            Iz could only hold 'cacheable' obejcts which needed caching methods defined...
+            etc... it needed many works with very few or nothing benefits...
+            Maybe some day...
+
+✔ @critical WHY IS THE SINGLETON A TRAIT NOT A CLASS ???? WTF ??? @done(24-12-27 09:51)
+    NOTE: becouse of the late static binding.
+            It is the "best" way to make this usable.
+
+✘ @low (BAD IDEA) (MAKE THIS HAPPEN!!! IT IS A COOL WAY!!!) maybe make possible to call Cache::forgetDiscordUser($discordUser); @cancelled(24-12-19 11:37)
+    or maybe use        Cache::getInstance()->forgetDiscordUser($discordUser)
+    or use HasCache +   $this->forgetDiscordUser($discordUser)
+    magic method __call_static, if methode starts with "get|store|forget" run  "return $this->{$methode}($params)"
+    NOTE: using a static method to access/change the values of the instantiated class is bad practise, can be confusing...
+    REJECTED! See note above.
+
+✔ @high Make sure, all commands return an error to the user in case of a failure. (profile return 401, but list does silently fail) @done(24-12-19 11:33)
+    - list - FAIL - OK!
+    - delete - autocomplete - FAIL - OK
+    - edit - autocomplete - FAIL - OK
+    Done.
+
+✘ @low AssureTimeZoneSet and it's methods could use better names... @cancelled(24-12-19 11:37)
+    Nope, it is good enough for now, but renamed part from "TimeZone" to "Timezone".
+
+✔ @low timezone and timeZone are used as well, maybe simply use "timezone" everywhere... @done(24-12-19 11:26)
+    Renamed everyhing to timezone.
+
+✔ @low HasClient and getApiClient() names does not match, maybe rename the trait to HasApiClient... @done(24-12-19 11:17)
+    Renamed HasClient trait to HasApiClient.
+
+✔ @high in the PHPDoc (ApiClient) the return type of theonFulfilled() fv should be declared! @done(24-12-19 11:11)
+    NOTE: added @api-response <response class> to the doc (non-standard, just for this purpose)
+
+✔ @low ClientMessages::listRemaindersCompacted - describe the 'paginate' array fields in the PHPdoc!! @done(24-12-19 10:44)
+    see: https://stackoverflow.com/questions/15414103/best-way-to-document-array-options-in-phpdoc
+    NOTE: no standards for this one, it is sort of "compatible", refctor it only if absolutly neccessary.
+
+✔ @high in the ClientMessages "warning" and "error" are mixed, fix them! @done(24-12-19 10:19)
+    like: errorDateTimeInThePast says "Worning", but it is an error (?maybe???)
+
+✔ @low Rename msgToArray to a more appropirate name. @done(24-12-18 10:59)
+    Renamed to optionChoise.
+
+✔ @high The "//-------------..." separator lines are different length, make them all the same length!!! (for now 118 is empty) @done(24-12-18 09:19)
+
+✔ @high All server errors should only show a mininmal error to the discord client, concrete errors should only be sent to the dev log!!! @done(24-12-17 16:01)
+    - /profile shows a 401 error!!!
+    NOTE: done, the user sees a "general error", the dev.log is for the operator to handle it
+
+✔ @high /delete command should handle "-1" as remainder position id - or any non valid value - for the remainder record iindex. @done(24-12-17 15:56)
+    NOTE: added parameter checking and error handling/reporting, aloso the same for /edit
+
+✔ @high Paginate /list output (2000 char max/messaged - discord limitation), show x, and if more are there, add a paging @done(24-12-17 14:50)
+        button bar there...
+        NOPE! add a header on the /list page (first row: shown 1..20 remainders, page 1/3)
+                and add an optional page parameter for /list
+        NOTE: added header info and optional "page" parameter to the command.
+
+✔ @low RemoveRemainder has a lot in common with EditRemainder, maybe some code could be reused here... @done(24-12-17 08:52)
+        commonly used code moved into RemainderListCommand trait
+
+✔ @low errorApiError is  the one with "Something went wrong on our side, sorry", @done(24-12-16 09:18)
+        but this is more like a general response, not only api error response, rename this to general!!!
+        and update all occurances!!!
+        NOTE: Renamed the old ApiError to GeneralError, and the old GeneralError to errorDetaiedError, this can be removed...
+
+✔ @critical The DiscordBot uses the HasDiscord trait, but that requires instantiation of the class, so it is BAAAADDDDD!!! @done(24-12-13 11:50)
+    Ehh, it is a singleton, so DiscordBot::getInstance()->getDiscord() is technically usable, soooo...
+
+✔ @high Handle edge cases like if no remainders exists jet (list/edit/delete) @done(24-12-13 11:47)
+    NOTE: /list added, /dedit and /delete is wip, but this is testing, not functionality...
+
+✔ @high create structured resopnse for the bot communication @done(24-12-13 11:46)
+
+✔ @high Remainder->dueAt() Add an ' (UTC)' string to the end of the time if no timezone info was present!!! @done(24-12-13 11:46)
+
+✔ @critical CreateRemainder: 19:00 megadva, 18:00 van mentve... @done(24-12-12 18:49)
+    note: in sql, utc is stored, we need to asjust the shown value based on the users timezone...
+    the Remainder should have an accessor, but for that it needs the DU...
+    NOTE: /list already uses this, the smarty carbon plugin has a timezone parameter for this, use it!!!
+    NOTE: copied from /list
+
+✔ @high Add .env.example @done(24-12-09 20:03)
+    - is the public-key needed?
+    - only add variables that are needed!
+
+✔ @low add tesing for malformed api response. @done(24-11-08 13:46)
+    NOTE: ApiResponse saves the error ('type' => 'json_decode_error') to the "internalError" property if the parsing fails...
+            and an DevLogger::error is saved.
+
+✔ @low maybe create a jsonResponse for the apiClient, which parses/handles error/data/code/stc... @done(24-11-08 13:44)
+    NOTE: apiClient handles and saves teh status of the response
+
+✔ @high DiscordUserBySnowflakeResponse is in theory the same as /discord_users/{discord_user} @done(24-11-08 13:36)
+    eighter make another class for it or rename the current one to match both cases
+    @crytical DO THIS ! remove DiscordUserBySnowflakeResponse, replace it with DiscordUserResponse
+    NOTE: done! backend is updated as well...
+
+✔ @high DevLogger with the magic method and all the phpdoc block, we could have wrote that directly as well... @done(24-11-08 13:34)
+    The "direct" methode is more readable, but way too redundant and boring, i kepp it this way.
+
+✔ @high add deleteRemainder command. @done(24-11-08 13:34)
+
+✔ @critical Add a DEV monolog target, and log errors/warnings there for the dev! @done(24-11-04 09:52)
+
+✔ @high Add a 'LogAndCall' type function to log failed api requests (like. 422/401/etc) and call the callback @done(24-09-23 10:26)
+    NOTE: the callback has ben replaced wit a response to interaction
+
+✔ @today Maybe add 'Content-Type' => 'application/json' as a default header to the ApiClient->client @done(24-09-19 12:17)
+
+✔ @low MAYBE make ApiClient a singleton as well as the Template... @done(24-09-19 12:11)
+
+✔ @high Make sure, that the /profile timezone cannot be sent without timezona data, and check for a valid timezone on server side. @done(24-09-11 22:25)
+    value checking added,
+    new functionality added to /profile if called without any options
+
+✔ @high /profile fails if the DU is not found by snowflake, create it first @done(24-09-11 22:24)
+    __OR__ maybe use that call as a get_or_create ???
+    Added put method (update) to the controller (firstOrCreate)
+
+✔ @high Maybe replace Loadable->nullSafe() with Loadable->toJson() which using nullsafe ans json_encode @done(24-09-11 22:01)
+    NOTE: implemeted JsonSerializable interface, so json_encode is safe to use wit skipping null properties,
+            added toJson(bool $unfiltered=false), which can be called with true parameter, to get all properties (even null ones)
+
+✔ @critical Implement GetOrRegisterDiscordUserBySnowflake on the backend and call that instead of only get !!! @done(24-09-06 15:39)
+

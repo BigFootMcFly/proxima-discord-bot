@@ -1,0 +1,9 @@
+src/Tests
+src/vendor
+src/.env
+src/.env.example
+src/debug/
+volumes/
+.git/
+.git-crypt/
+.github/
