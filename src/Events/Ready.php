@@ -40,7 +40,11 @@ class Ready implements Init
             ]);
 
         // send start notice to the log channel
-        $logChannel->sendMessage($message);
+        if ($logChannel !== null) {
+            $logChannel->sendMessage($message);
+        } else {
+            debug('LOG_CHANNEL is null ('. $logChannelID .')');
+        }
 
         // regiter RemainderService handler
         $loop = $discord->getLoop();
