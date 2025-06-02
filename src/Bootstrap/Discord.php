@@ -19,7 +19,7 @@ Env::get()->discord = new Discord([
     //'intents' => Intents::getAllIntents(),
     //'intents' => Intents::DIRECT_MESSAGES,
     //'intents' => 2147486720,
-    'intents' => 53608447,
+    'intents' => 380105141248,
 ]);
 
 require_once BOT_ROOT . '/Bootstrap/Events.php';
