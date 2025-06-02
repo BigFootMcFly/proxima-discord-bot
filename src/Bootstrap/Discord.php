@@ -17,7 +17,8 @@ Env::get()->bot = DiscordBot::getInstance();
 Env::get()->discord = new Discord([
     'token' => Env::get()->TOKEN,
     //'intents' => Intents::getAllIntents(),
-    'intents' => 277025392640,
+    'intents' => Intents::DIRECT_MESSAGES,
+    //'intents' => 277025392640,
 ]);
 
 require_once BOT_ROOT . '/Bootstrap/Events.php';
