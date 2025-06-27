@@ -205,17 +205,16 @@ class ClientMessages
 
     {if $paginate['pageCount']>1}
       Shown {$blue}{$paginate['first']}{$reset}..{$blue}{$paginate['last']}{$reset} of {$blue}{$paginate['itemCount']}{$reset} remainders, page {$blue}{$paginate['page']}{$reset} of {$blue}{$paginate['pageCount']}{$reset}:
-
     {/if}
     {foreach $remainders as $remainder}
-      {if $remainder->isOverDue()}
-        {assign var='dueAtColor' value=$darkRed}
-      {else}
-        {assign var='dueAtColor' value=$darkYellow}
-      {/if}
-    {($remainder@iteration+$paginate['first']-1)|string_format:"%02d"}: {$dueAtColor}{$remainder->due_at|carbon:{$discordUser->timezone}} {$darkCyan}- "{$green}{$remainder->message|truncate:20:"..."}{$darkCyan}"{$reset}
+    {if $remainder->isOverDue()}
+    {assign var='dueAtColor' value=$darkRed}
+    {else}
+    {assign var='dueAtColor' value=$darkYellow}
+    {/if}
+      {($remainder@iteration+$paginate['first']-1)|string_format:"%02d"}: {$dueAtColor}{$remainder->due_at|carbon:{$discordUser->timezone}} {$darkCyan}- "{$green}{$remainder->message|truncate:20:"..."}{$darkCyan}"{$reset}
     {foreachelse}
-      No remainders found.
+    No remainders found.
     {/foreach}
 
     EOL;
