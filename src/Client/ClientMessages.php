@@ -203,8 +203,8 @@ class ClientMessages
      */
     public const listRemaindersCompacted = <<<'EOL'
 
-    {if $paginate['pageCount']>1}
-      Shown {$blue}{$paginate['first']}{$reset}..{$blue}{$paginate['last']}{$reset} of {$blue}{$paginate['itemCount']}{$reset} remainders, page {$blue}{$paginate['page']}{$reset} of {$blue}{$paginate['pageCount']}{$reset}:
+    {if $paginate['pageCount']>0}
+    Shown {$blue}{$paginate['first']}{$reset}..{$blue}{$paginate['last']}{$reset} of {$blue}{$paginate['itemCount']}{$reset} remainders, page {$blue}{$paginate['page']}{$reset} of {$blue}{$paginate['pageCount']}{$reset}:
     {/if}
     {foreach $remainders as $remainder}
     {if $remainder->isOverDue()}
