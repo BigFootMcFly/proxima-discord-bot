@@ -16,6 +16,7 @@ on:
     paths-ignore:
       - README.md
       - src/README.md
+  workflow_dispatch:
 
 jobs:
     build_docker_image:
