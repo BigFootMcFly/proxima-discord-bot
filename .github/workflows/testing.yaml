@@ -12,7 +12,6 @@ on:
     branches:
 #      - 'test-**'
       - 'dev'
-  workflow_dispatch:
 
 jobs:
     build_docker_image:
